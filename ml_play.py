@@ -63,7 +63,7 @@ def ml_loop():
         else:
             # history_log = log[scene_info.frame]
             # action = history_log.command
-            if speedY > 0 and scene_info.ball[1] > 10 and scene_info.ball[0] > 20 and scene_info.ball[0] < 480:
+            if abs(speedY) > 0 and scene_info.ball[1] > 10 and scene_info.ball[0] > 20 and scene_info.ball[0] < 480:
                 frameBFcollide = (395 - scene_info.ball[1])/speedY ;
                 point = scene_info.ball[0];
                 direct = speedX / abs(speedX);
