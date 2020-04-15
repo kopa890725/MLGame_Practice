@@ -63,14 +63,14 @@ def ml_loop():
         else:
             # history_log = log[scene_info.frame]
             # action = history_log.command
-            if abs(speedY) > 0 and scene_info.ball[1] > 10 and scene_info.ball[0] > 20 and scene_info.ball[0] < 480:
+            if speedY > 0 and scene_info.ball[1] > 10 and scene_info.ball[0] > 10 and scene_info.ball[0] < 490:
                 frameBFcollide = (395 - scene_info.ball[1])/speedY ;
                 point = scene_info.ball[0];
                 direct = speedX / abs(speedX);
                 speedX = abs(speedX);
-                print(scene_info.ball[0],"  ",frameBFcollide,"  ",point);
+                # print(scene_info.ball[0],"  ",frameBFcollide,"  ",scene_info.ball[1]);
                 while frameBFcollide >= 1:
-                    if direct == -1.0:
+                    if direct == 1.0:
                         point = point + speedX
                     elif direct == -1.0:
                         point = point - speedX;
@@ -85,7 +85,8 @@ def ml_loop():
                     comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
                 if point < scene_info.platform[0] + 20 :
                     comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-                print(scene_info.platform[0] + 20 ,  "  " , point);
+                # print(scene_info.platform[0] + 20 ,  "  " , point);
+                # print();
             else:
                 if scene_info.platform[0] > 80 :
                     comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
