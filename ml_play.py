@@ -19,7 +19,7 @@ def ml_loop(side: str):
     @param side The side which this script is executed for. Either "1P" or "2P".
     """
 
-    # === Here is the execution order of the loop === #
+    # === Here is the execution order of the loop qwe=== #
     # 1. Put the initialization code here
     ball_served = False
     def move_to(player, pred) : #move platform to predicted position to catch ball 
