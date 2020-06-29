@@ -41,8 +41,8 @@ class MLPlay:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x <= 40 and x >= -40 :
-                        dropDistance = (self.car_vel - car["velocity"]) * ((abs(self.car_pos[0] - car["pos"][0]) // 3) + 8 )
-                        if dropDistance > y - 103 and dropDistance < y + 93:
+                        dropDistance = (self.car_vel - car["velocity"]) * ((abs(self.car_pos[0] - car["pos"][0]) // 3) + 9 )
+                        if dropDistance > y - 108 and dropDistance < y + 108:
                             grid.add(2)
                             '''if y < 200:
                                 speed_ahead = car["velocity"]
