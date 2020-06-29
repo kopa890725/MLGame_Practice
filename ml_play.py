@@ -13,7 +13,6 @@ class MLPlay:
         self.car_pos = (0,0)                        # pos initial
         self.car_lane = self.car_pos[0] // 70       # lanes 0 ~ 8
         self.lanes = [35, 105, 175, 245, 315, 385, 455, 525, 595]  # lanes center
-        self.target_lane = self.car_lane
         pass
 
     def update(self, scene_info):
@@ -30,88 +29,86 @@ class MLPlay:
         def check_grid():
             grid = set()
             speed_ahead = 100
-            if self.car_pos[0] <= 65: # left bound
+            if self.car_pos[0] <= 50: # left bound
+                grid.add(1)
                 grid.add(4)
-            elif self.car_pos[0] >= 565: # right bound
+            elif self.car_pos[0] >= 580: # right bound
+                grid.add(3)
                 grid.add(6)
 
             for car in scene_info["cars_info"]:
                 if car["id"] != self.player_no:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
-                    dropDistance = (self.car_vel - car["velocity"]) * ((abs(self.car_pos[0] - car["pos"][0]) // 3) + 8 )
-                    laneDif = ((car["pos"][0] // 70) - self.car_lane)
-                    if dropDistance > y - 90 and dropDistance < y + 103:
-                        if abs(laneDif) <= 2:
-                            grid.add(laneDif)
-                    if x > -45 and x <= -40 :
-                        if y > -82 and y < 82:
-                            grid.add(4)
-                    if x < 45 and x >= 40:
-                        if y > -82 and y < 82:
+                    if x <= 40 and x >= -40 :
+                        dropDistance = (self.car_vel - car["velocity"]) * ((abs(self.car_pos[0] - car["pos"][0]) // 3) + 8 )
+                        if dropDistance > y - 103 and dropDistance < y + 93:
+                            grid.add(2)
+                            '''if y < 200:
+                                speed_ahead = car["velocity"]
+                                grid.add(5) '''
+                    if x > -46 and x < -40 :
+                        if y > 84 and y < 250:
+                            grid.add(3)
+                        elif y < 84 and y > -80:
                             grid.add(6)
-            return targeting(grid = grid)
-
-        def targeting(grid):
-            self.target_lane = self.car_lane
-            for coin in scene_info["coins"]:
-                print((coin[0] - self.car_pos[0]) / 3, (self.car_pos[1] - coin[1]) / 5)
-                if (coin[1] < self.car_pos[1]) and ((abs(coin[0] - self.car_pos[0]) / 3) < (self.car_pos[1] - coin[1]) / 5) + 4:
-                    if coin[0] // 70 < self.car_lane and (-1 not in grid) and (-2 not in grid):
-                        self.target_lane = coin[0] // 70
-                        print("target_set:",self.target_lane)
-                        break
-                    elif coin[0] // 70 > self.car_lane and (1 not in grid) and (2 not in grid):
-                        self.target_lane = coin[0] // 70
-                        print("target_set:",self.target_lane)
-                        break
-                    elif coin[0] // 70 == self.car_lane:
-                        self.target_lane = self.car_lane
-                        break
-            if (4 in grid) and self.car_lane != 8:
-                self.target_lane = self.car_lane + 1
-            if (6 in grid) and self.car_lane != 0:
-                self.target_lane = self.car_lane - 1
-            return move(grid= grid)
+                    if x < 46 and x > 40:
+                        if y > 84 and y < 250:
+                            grid.add(1)
+                        elif y < 84 and y > -80:
+                            grid.add(4)
+            return move(grid= grid, speed_ahead = speed_ahead)
             
-        def move(grid): 
-            # if self.player_no == 0:
-            #     print(grid)
+        def move(grid, speed_ahead): 
             if self.player_no == 0:
-                print(self.car_lane, self.target_lane, self.car_lane > self.target_lane, self.car_lane < self.target_lane)
-                if len(grid) != 0:
-                    print(self.player_no , grid)
-            if len(grid) == 0:
-                return ["SPEED"]
-            else:
-                if (0 not in grid): # Check forward 
-                    # Back to lane center
-                    if self.car_lane > self.target_lane:
-                        print("self.car_lane > self.target_lane")
-                        return ["SPEED", "MOVE_LEFT"]
-                    elif self.car_lane < self.target_lane:
-                        print("self.car_lane < self.target_lane")
-                        return ["SPEED", "MOVE_RIGHT"]
-                    else :
-                        if self.car_pos[0] < self.lanes[self.target_lane]:
-                            print("self.car_pos[0] < self.lanes[self.target_lane]")
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if self.car_pos[0] > self.lanes[self.target_lane]:
-                            print("self.car_pos[0] > self.lanes[self.target_lane]")
+                print(grid)
+            if (2 not in grid): # Check forward 
+                # Back to lane center
+                for coin in scene_info["coins"]:
+                    if (coin[1] < self.car_pos[1]) and ((abs(coin[0] - self.car_pos[0]) / 3) < (self.car_pos[1] - coin[1]) / 5):
+                        if coin[0] // 70 < self.car_lane and (4 not in grid):
+                            if self.player_no == 0:print("COIN LEFT")
                             return ["SPEED", "MOVE_LEFT"]
-                        else: 
-                            print("Else SPEED")
-                            return ["SPEED"]
-                elif (0 in grid):
-                    if (4 not in grid) and (-1 not in grid): # turn left 
-                        print("MOVE_LEFT")
-                        return ["MOVE_LEFT"]
-                    elif (6 not in grid) and (1 not in grid): # turn right
-                        print("MOVE_RIGHT")
-                        return ["MOVE_RIGHT"]
+                        elif coin[0] // 70 > self.car_lane and (6 not in grid):
+                            if self.player_no == 0:print("COIN RIGHT")
+                            return ["SPEED", "MOVE_RIGHT"]
+                if self.car_pos[0] > self.lanes[self.car_lane]:
+                    if self.player_no == 0:print("local LEFT")
+                    return ["SPEED", "MOVE_LEFT"]
+                elif self.car_pos[0 ] < self.lanes[self.car_lane]:
+                    if self.player_no == 0:print("local RIGHT")
+                    return ["SPEED", "MOVE_RIGHT"]
+                else :return ["SPEED"]
+            else:
+                '''if (5 in grid): # NEED to BRAKE
+                    if (4 not in grid) and (7 not in grid): # turn left 
+                        if self.car_vel < speed_ahead:
+                            return ["SPEED", "MOVE_LEFT"]
+                        else:
+                            return ["BRAKE", "MOVE_LEFT"]
+                    elif (6 not in grid) and (9 not in grid): # turn right
+                        if self.car_vel < speed_ahead:
+                            return ["SPEED", "MOVE_RIGHT"]
+                        else:
+                            return ["BRAKE", "MOVE_RIGHT"]
                     else : 
-                        print("BRAKE")
-                        return ["BRAKE"]
+                        if self.car_vel < speed_ahead:  # BRAKE
+                            return ["SPEED"]
+                        else:
+                            return ["BRAKE"]'''
+                if (1 not in grid) and (4 not in grid): # turn left 
+                    if self.player_no == 0:print("turn LEFT")
+                    return ["SPEED", "MOVE_LEFT"]
+                if (3 not in grid) and (6 not in grid): # turn right
+                    if self.player_no == 0:print("turn RIGHT")
+                    return ["SPEED", "MOVE_RIGHT"]
+                if (4 not in grid) : # turn left 
+                    if self.player_no == 0:print("LEFT")
+                    return ["MOVE_LEFT"]    
+                if (6 not in grid) : # turn right
+                    if self.player_no == 0:print("RIGHT")
+                    return ["MOVE_RIGHT"]
+                                
                     
         if len(scene_info[self.player]) != 0:
             self.car_pos = scene_info[self.player]
