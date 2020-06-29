@@ -42,17 +42,17 @@ class MLPlay:
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x <= 40 and x >= -40 :
                         dropDistance = (self.car_vel - car["velocity"]) * ((abs(self.car_pos[0] - car["pos"][0]) // 3) + 8 )
-                        if dropDistance > y - 105 and dropDistance < y + 93:
+                        if dropDistance > y - 103 and dropDistance < y + 93:
                             grid.add(2)
                             '''if y < 200:
                                 speed_ahead = car["velocity"]
                                 grid.add(5) '''
-                    if x > -46 and x < -40 :
+                    if x > -43 and x < -40 :
                         if y > 84 and y < 250:
                             grid.add(3)
                         elif y < 84 and y > -80:
                             grid.add(6)
-                    if x < 46 and x > 40:
+                    if x < 43 and x > 40:
                         if y > 84 and y < 250:
                             grid.add(1)
                         elif y < 84 and y > -80:
@@ -66,12 +66,13 @@ class MLPlay:
                 # Back to lane center
                 for coin in scene_info["coins"]:
                     if (coin[1] < self.car_pos[1]) and ((abs(coin[0] - self.car_pos[0]) / 3) < (self.car_pos[1] - coin[1]) / 5):
-                        if coin[0] // 70 < self.car_lane and (4 not in grid):
-                            if self.player_no == 0:print("COIN LEFT")
-                            return ["SPEED", "MOVE_LEFT"]
-                        elif coin[0] // 70 > self.car_lane and (6 not in grid):
-                            if self.player_no == 0:print("COIN RIGHT")
-                            return ["SPEED", "MOVE_RIGHT"]
+                        if abs(coin[0] - self.car_pos[0]) > 30:
+                            if (coin[0] < self.car_lane - 30 ) and (4 not in grid):
+                                if self.player_no == 0:print("COIN LEFT")
+                                return ["SPEED", "MOVE_LEFT"]
+                            elif (coin[0] > self.car_lane + 30 ) and (6 not in grid):
+                                if self.player_no == 0:print("COIN RIGHT")
+                                return ["SPEED", "MOVE_RIGHT"]
                 if self.car_pos[0] > self.lanes[self.car_lane]:
                     if self.player_no == 0:print("local LEFT")
                     return ["SPEED", "MOVE_LEFT"]
