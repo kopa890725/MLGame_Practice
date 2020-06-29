@@ -47,12 +47,12 @@ class MLPlay:
                             '''if y < 200:
                                 speed_ahead = car["velocity"]
                                 grid.add(5) '''
-                    if x > -46 and x < -40 :
+                    if x > -43 and x < -40 :
                         if y > 84 and y < 250:
                             grid.add(3)
                         elif y < 84 and y > -80:
                             grid.add(6)
-                    if x < 46 and x > 40:
+                    if x < 43 and x > 40:
                         if y > 84 and y < 250:
                             grid.add(1)
                         elif y < 84 and y > -80:
