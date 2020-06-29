@@ -66,11 +66,11 @@ class MLPlay:
                 # Back to lane center
                 for coin in scene_info["coins"]:
                     if (coin[1] < self.car_pos[1]) and ((abs(coin[0] - self.car_pos[0]) / 3) < (self.car_pos[1] - coin[1]) / 5):
-                        if abs(coin[0] - self.car_pos[0]) > 30:
-                            if (coin[0] < self.car_lane - 30 ) and (4 not in grid):
+                        if abs(coin[0] - self.car_pos[0]) > 27:
+                            if (coin[0] < self.car_lane - 27 ) and (4 not in grid):
                                 if self.player_no == 0:print("COIN LEFT")
                                 return ["SPEED", "MOVE_LEFT"]
-                            elif (coin[0] > self.car_lane + 30 ) and (6 not in grid):
+                            elif (coin[0] > self.car_lane + 27 ) and (6 not in grid):
                                 if self.player_no == 0:print("COIN RIGHT")
                                 return ["SPEED", "MOVE_RIGHT"]
                 if self.car_pos[0] > self.lanes[self.car_lane]:
